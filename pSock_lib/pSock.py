@@ -84,13 +84,14 @@ class pSock:
                 if type(Address[0]) == str: 
                     if type(Address[1]) == int: 
                         self.ip, self.port = Address[0], Address[1]
-                        self.netargs = False
+                        self.netargs = True
                     else:
                         type1 = str(type(Address[1])).replace("<class '", "").replace("'>", "")
                         raise TypeError(f"int expected, not {type1}")
                 else:
                     type2 = str(type(Address[0])).replace("<class '", "").replace("'>", "")
                     raise TypeError(f"str expected, not {type2}") 
+        self.netargs = False
         self.threadstarted = False    
         self.connection = False
         if LocalFunction.SelfData_Format(AddressFamily) == False:
@@ -104,6 +105,7 @@ class pSock:
             self.sock.connect((str(self.ip), int(self.port)))
         else:
             self.ip, self.port = Address[0], Address[1]
+            print((str(self.ip)+ str(self.port)))
             self.sock.connect((str(self.ip), int(self.port)))
         self.connection = True
         self.netargs = True
@@ -121,38 +123,68 @@ class pSock:
         self.ip, self.port = Address[0], Address[1]
         self.netargs = True
 
-    def start(self, FunctionName, ToListen = 1):
+    def listen(self, ToListen = 1):
         if self.connection == True:
             self.sock.listen(ToListen)
-            while True:
-                connection, address = self.sock.accept()
-                thread = threading.Thread(target = FunctionName, args=(connection, address))
-                self.threadstarted = True
-                thread.start() 
-                return connection, address 
         else:
             raise OSError("Unable to start an unestablished connection.")
-
-    def take(self, codify = "utf-8", buffer = 16):
-        if self.connection and self.netargs:
-            taked = ""
+    def accept(self):
+        if self.connection == True:
             while True:
-                takeon16 = self.sock.recv(buffer)
-                if len(takeon16) <= 0:
-                    break
-                taked += takeon16.decode(codify)
-            if len(taked) > 0:
-                return taked
+                try:
+                    connection, address = self.sock.accept()
+                    return connection, address
+                except:
+                            pass
+        else:
+            raise OSError("Unable to start an unestablished connection.")
+    def start(self, FunctionName, Address = [None, None]):
+        if Address != [None, None]:
+                if type(Address[0]) == str: 
+                    if type(Address[1]) == int: 
+                        if self.connection == True:
+                            self.conn, self.addr = Address[0], Address[1]
+                            while True:
+                                try:
+                                    thread = threading.Thread(target = FunctionName, args=(self.conn, self.addr))
+                                    self.threadstarted = True
+                                    thread.start()
+                                except:
+                                    pass
+                        else:
+                            raise OSError("Unable to start an unestablished connection.")
+                    else:
+                        type1 = str(type(Address[1])).replace("<class '", "").replace("'>", "")
+                        raise TypeError(f"int expected, not {type1}")
+                else:
+                    type2 = str(type(Address[0])).replace("<class '", "").replace("'>", "")
+                    raise TypeError(f"str expected, not {type2}")
+            
+        
+            
 
-    def sendto(self, content, codify = "utf-8", address = ["localhost", 80]):
+    def take(self, connection, codify = "utf-8", buffer = 2048):
+        if connection == None:
+            connection = self.sock
+        if self.connection and self.netargs:
+            takeon16 = connection.recv(buffer)
+            taked = takeon16.decode(codify)
+            return taked
+            
+
+    def sendto(self, content, connection = None, codify = "utf-8", address = ["localhost", 80]):
+        if connection == None:
+            connection = self.sock
         tosend = str(content).encode(str(codify))
         ip, port = address[0], address[1]
-        self.sock.sendto(tosend, (ip, port))
+        connection.sendto(tosend, (ip, port))
 
-    def send(self, content, codify = "utf-8"):
+    def send(self, content, connection = None, codify = "utf-8"):
+        if connection == None:
+            connection = self.sock
         if self.connection and self.netargs:
             tosend = str(content).encode(str(codify))
-            self.sock.sendall(tosend)
+            connection.sendall(tosend)
         else:
             raise OSError("Unable to send an unestablished connection.")
 
@@ -166,7 +198,7 @@ class pSock:
             raise OSError("Unable to close an unestablished connection.")
         self.sock.close()
         self.connection = False
-
+    
     @property
     def getactiveconnections(self):
         return threading.active_count() - 1
