@@ -15,11 +15,11 @@ Windows = ```pip install pSock```
 ```python
 from pSock_lib import pSock
 
-def ToRunOnlyInConnection():
+def ToRunOnlyInConnection(conn):
     print("This is a server!")
     print(f"Active connections {sock.getactiveconnections}")
     while True:
-        reiceved = sock.take(codify = "utf-8", buffer = 16)
+        reiceved = sock.take(conn, codify = "utf-8", buffer = 2048)
         # The take function receives the entire message in a loop
         print(reiceved)
     sock.quit()
@@ -29,7 +29,10 @@ ip, port = "localhost", 80
 
 sock = pSock.pSock(pSock.AF_INET, pSock.SOCK_STREAM)
 sock.createserver([ip, port])
-sock.start(ToRunOnlyInConnection(), ToListen = 1)
+sock.listen(ToListen = 1)
+while True:
+    conn, addr = sock.accept()
+    sock.start(ToRunOnlyInConnection(conn), [conn, addr])
 ```
 
 # How To Create a Client
