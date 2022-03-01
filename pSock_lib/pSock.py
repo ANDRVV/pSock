@@ -30,7 +30,7 @@
 
 """pSock is a socket / threading module that helps developers and students to approach Server-Client creation and much more."""
 
-import socket, threading, pSock
+import socket, threading
 
 # FAMILY ADDRESS
 
@@ -78,7 +78,7 @@ class LocalFunction:
             
 class pSock:
 
-    def __init__(self, AddressFamily = pSock.AF_INET, Sock = pSock.SOCK_STREAM, Address = [None, None]):
+    def __init__(self, AddressFamily = AF_INET, Sock = SOCK_STREAM, Address = [None, None]):
         """SOCKET = pSock.pSock(ADDR-FAMILY, SOCK-TYPE, ADDRESS = [IP, PORT])"""
         if Address != [None, None]:
                 if type(Address[0]) == str: 
