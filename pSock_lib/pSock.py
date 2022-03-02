@@ -35,11 +35,11 @@ import socket, threading
 def gethostname():
     return socket.gethostname()
 
-def getfdname8():
+def getfdname():
     return socket.getfqdn(socket.gethostname())
 
 def getproto(protocolname):
-    return socket.getprotobyname()
+    return socket.getprotobyname(protocolname)
     
 def getservice(nameorport):
     if type(nameorport) == str:
@@ -49,11 +49,11 @@ def getservice(nameorport):
     else:
         raise AttributeError(f"str or int expected, not {type(nameorport)}")
 
-def gethost(nameoraddr):
-    if str(nameoraddr).find("."):
-        socket.gethostbyaddr(nameoraddr)
+def gethost(nameorip):
+    if str(nameorip).find("."):
+        socket.gethostbyaddr(nameorip)
     else:
-        socket.gethostbyname(nameoraddr)
+        socket.gethostbyname(nameorip)
 
 # FAMILY ADDRESS
 
@@ -173,9 +173,10 @@ class pSock:
         if connection == None:
             connection = self.sock
         if self.connection and self.netargs:
-            takeon16 = connection.recv(buffer)
-            taked = takeon16.decode(codify)
-            return taked     
+            received = self.sock.recv(buffer) 
+            return received.decode(codify) 
+        else: 
+            raise OSError("Unable to take an unestablished connection.") 
 
     def sendto(self, content, connection = None, codify = "utf-8", address = ["localhost", 80]):
         if connection == None:
@@ -205,10 +206,6 @@ class pSock:
         self.connection = False
 
     @property
-    def gethostname(self):
-        return socket.gethostname()
-
-    @property
     def getactiveconnectionsdata(self):
         if self.accepted:
             return self.connectiondata, self.addressdata
@@ -218,7 +215,7 @@ class pSock:
     @property
     def getactiveconnections(self):
         if self.threadstarted:
-            return threading.active_count() - 1
+            return threading.active_count()
         else:
             raise OSError("Unable to get active connection without start().")
 
