@@ -30,7 +30,7 @@
 
 """pSock is a socket / threading module that helps developers and students to approach Server-Client creation and much more."""
 
-import socket, threading, socketserver
+import socket, threading
 
 # FAMILY ADDRESS
 
@@ -180,8 +180,6 @@ class pSock:
             raise OSError("Unable to close an unestablished connection.")
         self.sock.close()
         self.connection = False
-
-    socket.dup
 
     @property
     def getactiveconnectionsdata(self):
