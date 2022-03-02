@@ -32,6 +32,10 @@
 
 import socket, threading
 
+@property
+def gethostname(self):
+    return socket.gethostname()
+
 # FAMILY ADDRESS
 
 global LIST_OF_FAMILY_ADDRESS
