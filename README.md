@@ -6,9 +6,9 @@ Developed by Andrea Vaccaro from ANDRVV (c) 2022
 
 # Installing
 
-Linux, MacOS = ```pip3 install pSock```
+Linux, MacOS = ```pip3 install pSock --user```
 
-Windows = ```pip install pSock```
+Windows = ```pip install pSock --user```
 
 # How To Create a Server
 
@@ -19,9 +19,10 @@ def ToRunOnlyInConnection(conn):
     print("This is a server!")
     print(f"Active connections {sock.getactiveconnections}")
     while True:
-        reiceved = sock.take(conn, codify = "utf-8", buffer = 2048)
-        # The take function receives the entire message in a loop
-        print(reiceved)
+        received = sock.take(conn, codify = "utf-8", buffer = 2048)
+        if received == "!quit":
+            break
+        print(received)
     sock.quit()
 
 
@@ -48,13 +49,15 @@ sock.connect([ip, port])
 print("This is a client!")
 while True:
     tosend = input("> ")
+    if tosend = "!quit":
+        break
     sock.send(tosend, codify = "utf-8")
 sock.quit()
 ```
 
 # Other Commands And Methods
 
-Receive host, address and active connections
+Receive info, local and remote
 
 ```python
 from pSock_lib import pSock
@@ -64,9 +67,18 @@ ip, port = "localhost", 80
 sock = pSock.pSock(pSock.AF_INET, pSock.SOCK_STREAM)
 sock.createserver([ip, port])
 
+protocol_name = "udp"
+
 host = sock.gethost
-addr = sock.getaddr
-active_connections = sock.getactiveconnections
+address = sock.getaddr
+active_connections = sock.getactiveconnections # Output: int
+active_connection_data = sock.getactiveconnectionsdata # Output: list/tuple
+
+my_host_name = pSock.gethostname()
+fully_domain_name = pSock.getfdname()
+get_proto = pSock.getproto(protocol_name)
+get_service = pSock.getservice(port) # Insert name or port
+get_host_remote = pSock.gethost(ip) # Insert IP or name
 ```
 
 Sending without connections
