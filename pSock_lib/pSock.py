@@ -182,6 +182,10 @@ class pSock:
         self.connection = False
 
     @property
+    def gethostname(self):
+        return socket.gethostname()
+
+    @property
     def getactiveconnectionsdata(self):
         if self.accepted:
             return self.connectiondata, self.addressdata
