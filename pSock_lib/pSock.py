@@ -30,7 +30,7 @@
 
 """pSock is a socket / threading module that helps developers and students to approach Server-Client creation and much more."""
 
-import socket, threading
+import socket, threading, socketserver
 
 # FAMILY ADDRESS
 
@@ -91,6 +91,7 @@ class pSock:
                 else:
                     type2 = str(type(Address[0])).replace("<class '", "").replace("'>", "")
                     raise TypeError(f"str expected, not {type2}") 
+        self.accepted = False
         self.netargs = False
         self.threadstarted = False    
         self.connection = False
@@ -133,35 +134,17 @@ class pSock:
             while True:
                 try:
                     connection, address = self.sock.accept()
+                    self.accepted = True
+                    self.connectiondata, self.addressdata = connection, address
                     return connection, address
                 except:
                             pass
         else:
             raise OSError("Unable to start an unestablished connection.")
-    def start(self, FunctionName, Address = [None, None]):
-        if Address != [None, None]:
-                if type(Address[0]) == str: 
-                    if type(Address[1]) == int: 
-                        if self.connection == True:
-                            self.conn, self.addr = Address[0], Address[1]
-                            while True:
-                                try:
-                                    thread = threading.Thread(target = FunctionName, args=(self.conn, self.addr))
-                                    self.threadstarted = True
-                                    thread.start()
-                                except:
-                                    pass
-                        else:
-                            raise OSError("Unable to start an unestablished connection.")
-                    else:
-                        type1 = str(type(Address[1])).replace("<class '", "").replace("'>", "")
-                        raise TypeError(f"int expected, not {type1}")
-                else:
-                    type2 = str(type(Address[0])).replace("<class '", "").replace("'>", "")
-                    raise TypeError(f"str expected, not {type2}")
-            
-        
-            
+    def start(self, FunctionName, Arguments):
+        thread = threading.Thread(target = FunctionName, args=(Arguments))
+        self.threadstarted = True
+        thread.start()
 
     def take(self, connection, codify = "utf-8", buffer = 2048):
         if connection == None:
@@ -169,8 +152,7 @@ class pSock:
         if self.connection and self.netargs:
             takeon16 = connection.recv(buffer)
             taked = takeon16.decode(codify)
-            return taked
-            
+            return taked     
 
     def sendto(self, content, connection = None, codify = "utf-8", address = ["localhost", 80]):
         if connection == None:
@@ -198,10 +180,22 @@ class pSock:
             raise OSError("Unable to close an unestablished connection.")
         self.sock.close()
         self.connection = False
-    
+
+    socket.dup
+
+    @property
+    def getactiveconnectionsdata(self):
+        if self.accepted:
+            return self.connectiondata, self.addressdata
+        else:
+            raise OSError("Unable to get active connection without accept().")
+
     @property
     def getactiveconnections(self):
-        return threading.active_count() - 1
+        if self.threadstarted:
+            return threading.active_count() - 1
+        else:
+            raise OSError("Unable to get active connection without start().")
 
     @property
     def getaddr(self):
