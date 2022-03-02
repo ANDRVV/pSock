@@ -32,9 +32,28 @@
 
 import socket, threading
 
-@property
-def gethostname(self):
+def gethostname():
     return socket.gethostname()
+
+def getfdname8():
+    return socket.getfqdn(socket.gethostname())
+
+def getproto(protocolname):
+    return socket.getprotobyname()
+    
+def getservice(nameorport):
+    if type(nameorport) == str:
+        return socket.getservbyname(nameorport)
+    elif type(nameorport) == int:
+        return socket.getservbyport(nameorport)
+    else:
+        raise AttributeError(f"str or int expected, not {type(nameorport)}")
+
+def gethost(nameoraddr):
+    if str(nameoraddr).find("."):
+        socket.gethostbyaddr(nameoraddr)
+    else:
+        socket.gethostbyname(nameoraddr)
 
 # FAMILY ADDRESS
 
