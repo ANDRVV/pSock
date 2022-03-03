@@ -13,7 +13,7 @@
 #   this list of conditions and the following disclaimer in the documentation
 #   and/or other materials provided with the distribution.
 #
-# * Neither the name of the psutil authors nor the names of its contributors
+# * Neither the name of the pSock authors nor the names of its contributors
 #   may be used to endorse or promote products derived from this software without
 #   specific prior written permission.
 #
@@ -30,7 +30,7 @@
 
 """pSock is a socket / threading module that helps developers and students to approach Server-Client creation and much more."""
 
-import socket, threading
+import socket, threading, requests, json, bs4
 
 def gethostname():
     return socket.gethostname()
@@ -57,7 +57,6 @@ def gethost(nameorip):
 
 # FAMILY ADDRESS
 
-global LIST_OF_FAMILY_ADDRESS
 LIST_OF_FAMILY_ADDRESS = ["AF_UNIX", "AF_INET", "AF_INET6", "AF_APPLETALK", "AF_BLUETOOTH", "AF_IPX", "AF_IRDA", "AF_LINK", "AF_SNA", "AF_UNSPEC"]
 
 AF_UNIX = socket.AddressFamily.AF_INET
@@ -73,7 +72,6 @@ AF_UNSPEC = socket.AddressFamily.AF_UNSPEC
     
 # SOCK TYPE
 
-global LIST_OF_SOCK_TYPE
 LIST_OF_SOCK_TYPE = ["SOCK_STREAM", "SOCK_DGRAM", "SOCK_RAW", "SOCK_RDM", "SOCK_SEQPACKET"]
 
 SOCK_STREAM = socket.SocketKind.SOCK_STREAM 
@@ -83,26 +81,69 @@ SOCK_RDM = socket.SocketKind.SOCK_RDM
 SOCK_SEQPACKET = socket.SocketKind.SOCK_SEQPACKET
 
 class LocalFunction:
-    def SelfData_Format(data):
-        if str(data).find("AddressFamily.") != -1:
-            newdata = str(data).replace("AddressFamily.", "")
-            if newdata in LIST_OF_FAMILY_ADDRESS:
-                return True
+        def SelfData_Format(data):
+            if str(data).find("AddressFamily.") != -1:
+                newdata = str(data).replace("AddressFamily.", "")
+                if newdata in LIST_OF_FAMILY_ADDRESS:
+                    return True
+                else:
+                    return False
+            elif str(data).find("SocketKind.") != -1:
+                newdata = str(data).replace("SocketKind.", "")
+                if newdata in LIST_OF_SOCK_TYPE:
+                    return True
+                else:
+                    return False
             else:
                 return False
-        elif str(data).find("SocketKind.") != -1:
-            newdata = str(data).replace("SocketKind.", "")
-            if newdata in LIST_OF_SOCK_TYPE:
-                return True
-            else:
-                return False
+  
+class Web():
+    
+    def __init__(self):
+        self.response = None
+        self.responsedata = None
+    
+    def responsesearch(self, url, classandid = None):
+        self.response = requests.get(url)
+        soup = bs4.BeautifulSoup(self.response.text, "lxml")
+        elements = ["!DOCTYPE","html","body","h1","h2","h3","h4","h5","h6","p","br","hr","acronym","abbr","address","b","bdo","big","blockquote","center","cite","code","del","dfn","em","font","i","ins","kbd","pre","q","s","samp","small","strike","strong","sub","sup","tt","u","var","xmp","form","input","textarea","button","select","optgroup","option","label","fieldset","legend","isindex","frame","frameset","noframe","iframe","img","map","area","a","link","ul","ol","li","dir","dl","dt","dd","table","caption","th","tr","td","thead","tbody","tfoot","col","colgroup","style","div","span","head","title","meta","base","basefont","script","noscript","applet","object","param"]
+        if classandid == None:
+            for element in elements:
+                try:
+                    finded = soup.find(element)
+                except:
+                    pass
+            return finded
+        elif type(classandid) == dict:
+            for element in elements:
+                try:
+                    soup.find(element, classandid)
+                except:
+                    pass
+            return finded
         else:
-            return False
-            
-class pSock:
+            raise SyntaxError(f"dict expected, not {type(classandid)}")
 
+        
+    def getresponsedata(self, url):
+        response = self.response = requests.get(url).text
+        self.responsedata = json.loads(response)
+        return self.responsedata
+
+    def getresponsetext(self, url):
+        response = self.response = requests.get(url)
+        return response.text
+    
+    @property
+    def responsemethod(self):
+        if self.response != None:
+            return self.response()
+        else:
+            raise OSError("Unable to convert in response class without execute getresponsetext().")
+
+class Net:
     def __init__(self, AddressFamily = AF_INET, Sock = SOCK_STREAM, Address = [None, None]):
-        """SOCKET = pSock.pSock(ADDR-FAMILY, SOCK-TYPE, ADDRESS = [IP, PORT])"""
+        """SOCKET = pSock.Net(ADDR-FAMILY, SOCK-TYPE, ADDRESS = [IP, PORT])"""
         if Address != [None, None]:
                 if type(Address[0]) == str: 
                     if type(Address[1]) == int: 
@@ -164,6 +205,7 @@ class pSock:
                             pass
         else:
             raise OSError("Unable to start an unestablished connection.")
+
     def start(self, FunctionName, Arguments):
         thread = threading.Thread(target = FunctionName, args=(Arguments))
         self.threadstarted = True
