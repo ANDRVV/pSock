@@ -28,7 +28,7 @@ def ToRunOnlyInConnection(conn):
 
 ip, port = "localhost", 80
 
-sock = pSock.pSock(pSock.AF_INET, pSock.SOCK_STREAM)
+sock = pSock.Net(pSock.AF_INET, pSock.SOCK_STREAM)
 sock.createserver([ip, port])
 sock.listen(ToListen = 1)
 while True:
@@ -43,7 +43,7 @@ from pSock_lib import pSock
 
 ip, port = "localhost", 80
 
-sock = pSock.pSock(pSock.AF_INET, pSock.SOCK_STREAM)
+sock = pSock.Net(pSock.AF_INET, pSock.SOCK_STREAM)
 sock.connect([ip, port])
 
 print("This is a client!")
@@ -55,6 +55,23 @@ while True:
 sock.quit()
 ```
 
+# Web Scraping
+
+```python
+from pSock_lib import pSock
+
+web = pSock.Web()
+web.getresponsetext() # web.responsemethod to show response in modality "Response"
+
+json_data = web.getresponsedata()
+name = json_data[name]
+
+to_find = {"class": "python-logo"}
+
+to_research = pSock.Web.responsesearch("www.python.org", to_find)
+
+```
+
 # Other Commands And Methods
 
 Receive info, local and remote
@@ -64,7 +81,7 @@ from pSock_lib import pSock
 
 ip, port = "localhost", 80
 
-sock = pSock.pSock(pSock.AF_INET, pSock.SOCK_STREAM)
+sock = pSock.Net(pSock.AF_INET, pSock.SOCK_STREAM)
 sock.createserver([ip, port])
 
 protocol_name = "udp"
@@ -88,7 +105,7 @@ from pSock_lib import pSock
 
 ip, port = "localhost", 80
 
-sock = pSock.pSock(pSock.AF_INET, pSock.SOCK_STREAM)
+sock = pSock.Net(pSock.AF_INET, pSock.SOCK_STREAM)
 
 tosend = input("> ")
 
@@ -102,7 +119,7 @@ from pSock_lib import pSock
 
 ip, port = "localhost", 80
 
-sock = pSock.pSock(pSock.AF_INET, pSock.SOCK_STREAM)
+sock = pSock.Net(pSock.AF_INET, pSock.SOCK_STREAM)
 
 tosend = input("> ")
 
@@ -119,3 +136,5 @@ sock.createserver()
 
 sock.cancelsets() # To delete the IP and ports set
 ```
+
+
