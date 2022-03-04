@@ -13,7 +13,7 @@ Windows = ```pip install pSock --user```
 # How To Create a Server
 
 ```python
-from pSock_lib import pSock
+import pSock
 
 def ToRunOnlyInConnection(conn):
     print("This is a server!")
@@ -39,7 +39,7 @@ while True:
 # How To Create a Client
 
 ```python
-from pSock_lib import pSock
+import pSock
 
 ip, port = "localhost", 80
 
@@ -58,7 +58,7 @@ sock.quit()
 # Web Scraping
 
 ```python
-from pSock_lib import pSock
+import pSock
 
 web = pSock.Web()
 web.getresponsetext() # web.responsemethod to show response in modality "Response"
@@ -77,7 +77,7 @@ to_research = pSock.Web.responsesearch("www.python.org", to_find)
 Receive info, local and remote
 
 ```python
-from pSock_lib import pSock
+import pSock
 
 ip, port = "localhost", 80
 
@@ -101,7 +101,7 @@ get_host_remote = pSock.gethost(ip) # Insert IP or name
 Sending without connections
 
 ```python
-from pSock_lib import pSock
+import pSock
 
 ip, port = "localhost", 80
 
@@ -115,7 +115,7 @@ sock.sendto(tosend, codify = "utf-8", ["localhost", 80])
 Setting a temporary addr
 
 ```python
-from pSock_lib import pSock
+import pSock
 
 ip, port = "localhost", 80
 
