@@ -102,7 +102,7 @@ class LocalFunction:
             else:
                 return False
   
-class Web():
+class Web(_utils):
     
     def __init__(self):
         self.response = None
@@ -139,7 +139,7 @@ class Web():
         response = self.response = requests.get(url)
         return response.text
 
-class Net:
+class Net(_utils):
     def __init__(self, AddressFamily = AF_INET, Sock = SOCK_STREAM, Address = [None, None]):
         """SOCKET = pSock.Net(ADDR-FAMILY, SOCK-TYPE, ADDRESS = [IP, PORT])"""
         if Address != [None, None]:
