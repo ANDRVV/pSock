@@ -6,7 +6,7 @@ here = os.path.abspath(os.path.dirname(__file__))
 with codecs.open(os.path.join(here, "README.md"), encoding="utf-8") as fh:
     long_description = "\n" + fh.read()
 
-VERSION = '1.2.8'
+VERSION = '1.3.5'
 DESCRIPTION = 'pSock is a socket / threading module that helps developers and students to approach Server-Client creation and much more.'
 
 setup(
