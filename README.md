@@ -76,7 +76,7 @@ to_research = pSock.Web.responsesearch("www.python.org", to_find)
 Receive info, local and remote
 
 ```python
-from pSock_lib import pSock
+import pSock
 
 ip, port = "localhost", 80
 
