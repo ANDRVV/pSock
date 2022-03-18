@@ -33,7 +33,7 @@ sock.createserver([ip, port])
 sock.listen(ToListen = 1)
 while True:
     conn, addr = sock.accept()
-    sock.start(ToRunOnlyInConnection(conn), [conn, addr])
+    sock.start(ToRunOnlyInConnection(), [conn, addr])
 ```
 
 # How To Create a Client
